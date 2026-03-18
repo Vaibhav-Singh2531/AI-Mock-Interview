@@ -4,12 +4,13 @@ import { useEffect, useState } from 'react';
 import { vapi } from '@/lib/vapi.sdk';
 import { interviewer } from '@/constants';
 
-enum CallStatus {
-  INACTIVE = 'INACTIVE',
-  CONNECTING = 'CONNECTING',
-  ACTIVE = 'ACTIVE',
-  FINISHED = 'FINISHED',
-}
+const CallStatus = {
+  INACTIVE: 'INACTIVE',
+  CONNECTING: 'CONNECTING',
+  ACTIVE: 'ACTIVE',
+  FINISHED: 'FINISHED',
+} as const;
+type CallStatus = typeof CallStatus[keyof typeof CallStatus];
 
 interface SavedMessage {
   role: 'user' | 'system' | 'assistant';
@@ -48,12 +49,12 @@ const Agent = ({ userName, userId, type, interviewId, questions }: AgentProps) =
     vapi.on('error', onError);
 
     return () => {
-      vapi.off('call-start', onCallStart);
-      vapi.off('call-end', onCallEnd);
-      vapi.off('message', onMessage);
-      vapi.off('speech-start', onSpeechStart);
-      vapi.off('speech-end', onSpeechEnd);
-      vapi.off('error', onError);
+      vapi.removeListener('call-start', onCallStart);
+      vapi.removeListener('call-end', onCallEnd);
+      vapi.removeListener('message', onMessage);
+      vapi.removeListener('speech-start', onSpeechStart);
+      vapi.removeListener('speech-end', onSpeechEnd);
+      vapi.removeListener('error', onError);
     };
   }, []);
 
