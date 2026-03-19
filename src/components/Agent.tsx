@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { vapi } from '@/lib/vapi.sdk';
 import { interviewer } from '@/constants';
+import { fetchWithAuth } from '@/lib/api';
 
 const CallStatus = {
   INACTIVE: 'INACTIVE',
@@ -60,7 +61,7 @@ const Agent = ({ userName, userId, type, interviewId, questions }: AgentProps) =
 
   const handleGenerateFeedback = async (messages: SavedMessage[]) => {
     try {
-      const res = await fetch('/api/feedback', {
+      const res = await fetchWithAuth('/api/feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

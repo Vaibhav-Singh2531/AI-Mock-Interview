@@ -23,11 +23,14 @@ app.get('/health', (req, res) => {
     res.status(200).json({ status: 'ok', message: 'Express server is running perfectly.' });
 });
 
-// Import and use routes (Will add them in Part 2)
-// import feedbackRoutes from './routes/feedback';
-// import vapiRoutes from './routes/vapi';
-// app.use('/api/feedback', feedbackRoutes);
-// app.use('/api/vapi', vapiRoutes);
+// Import routes and middleware
+import { requireAuth } from './middleware/auth';
+import feedbackRoutes from './routes/feedback';
+import vapiRoutes from './routes/vapi';
+
+// Protect API routes with Firebase auth middleware
+app.use('/api/feedback', requireAuth, feedbackRoutes);
+app.use('/api/vapi/generate', requireAuth, vapiRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
