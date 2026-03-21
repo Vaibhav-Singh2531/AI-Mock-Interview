@@ -16,6 +16,7 @@ import SignUpPage from '@/pages/SignUpPage';
 import InterviewGeneratePage from '@/pages/InterviewGeneratePage';
 import InterviewPage from '@/pages/InterviewPage';
 import FeedbackPage from '@/pages/FeedbackPage';
+import NotFoundPage from '@/pages/NotFoundPage';
 
 function App() {
   return (
@@ -37,6 +38,9 @@ function App() {
               <Route path="/interview/:id/feedback" element={<FeedbackPage />} />
             </Route>
           </Route>
+
+          {/* Catch-all route for 404 */}
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
         <Toaster />
       </AuthProvider>

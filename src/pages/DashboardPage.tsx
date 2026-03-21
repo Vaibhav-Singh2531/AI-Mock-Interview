@@ -86,7 +86,9 @@ const DashboardPage = () => {
         <h2>Your Interviews</h2>
         <div className="interviews-section">
           {loading ? (
-            <p className="text-light-400">Loading your interviews...</p>
+             Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="animate-pulse bg-white/5 border border-white/10 h-32 w-full rounded-xl"></div>
+             ))
           ) : hasPastInterviews ? (
             userInterviews.map((interview) => (
               <InterviewCard {...interview} key={interview.id} />
@@ -102,7 +104,9 @@ const DashboardPage = () => {
         <h2>Take an Interview</h2>
         <div className="interviews-section">
           {loading ? (
-            <p className="text-light-400">Loading interviews...</p>
+             Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="animate-pulse bg-white/5 border border-white/10 h-32 w-full rounded-xl"></div>
+             ))
           ) : hasUpcomingInterviews ? (
             latestInterviews.map((interview) => (
               <InterviewCard {...interview} key={interview.id} />
