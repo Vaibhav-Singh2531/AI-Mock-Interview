@@ -1,73 +1,67 @@
-# React + TypeScript + Vite
+# PrepWise AI Mock Interview
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+PrepWise is an AI-powered mock interview application that helps candidates practice for interviews using a customized Voice Agent and receive instant, structured feedback.
 
-Currently, two official plugins are available:
+## Architecture
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+The application is split into two parts running concurrently:
+- **Frontend**: React 19 SPA built with Vite and Tailwind CSS.
+- **Backend**: Express.js server providing API routes, protected by Firebase Admin.
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Frontend**: React 19, React Router v7, Tailwind CSS, shadcn/ui.
+- **Backend**: Express.js, Firebase Admin SDK.
+- **AI & Voice**: `@ai-sdk/google` (Gemini API 2.0 Flash) and Vapi (`@vapi-ai/web`).
+- **Database & Auth**: Firebase (Auth & Firestore).
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 1. Prerequisites
+- Node.js (v18+)
+- A Firebase project with Authentication (Email/Password) and Firestore enabled.
+- A Gemini API Key.
+- A Vapi API Key.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### 2. Environment Variables
+Create a `.env` file in the root of the project with the following keys. Note the `VITE_` prefix for variables that need to be exposed to the React frontend.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+```env
+# Firebase Client (Frontend)
+VITE_FIREBASE_API_KEY="your-api-key"
+VITE_FIREBASE_AUTH_DOMAIN="your-auth-domain"
+VITE_FIREBASE_PROJECT_ID="your-project-id"
+VITE_FIREBASE_STORAGE_BUCKET="your-storage-bucket"
+VITE_FIREBASE_MESSAGING_SENDER_ID="your-sender-id"
+VITE_FIREBASE_APP_ID="your-app-id"
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Firebase Admin (Backend)
+FIREBASE_PROJECT_ID="your-project-id"
+FIREBASE_CLIENT_EMAIL="your-service-account-email"
+FIREBASE_PRIVATE_KEY="your-private-key"
+
+# Vapi (Voice Agent)
+VITE_VAPI_WEB_TOKEN="your-public-vapi-web-token"
+VITE_VAPI_WORKFLOW_ID="your-vapi-workflow-id"
+
+# Google Gemini (AI Feedback & Question Gen)
+GOOGLE_GENERATIVE_AI_API_KEY="your-gemini-api-key"
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 3. Installation
+Install all dependencies for the workspace.
+```bash
+npm install
 ```
+
+### 4. Running the Development Server
+This will start both the Vite development server and the Express backend concurrently.
+```bash
+npm run dev
+```
+
+### 5. Building for Production
+```bash
+npm run build
+```
+The optimized static build will be output to the `dist/` directory. You will still need to deploy the `server/` separately for backend functionality.
