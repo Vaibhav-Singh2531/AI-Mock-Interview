@@ -27,10 +27,12 @@ app.get('/health', (req, res) => {
 import { requireAuth } from './middleware/auth';
 import feedbackRoutes from './routes/feedback';
 import vapiRoutes from './routes/vapi';
+import interviewsRoutes from './routes/interviews'; // Added
 
 // Protect API routes with Firebase auth middleware
 app.use('/api/feedback', requireAuth, feedbackRoutes);
 app.use('/api/vapi/generate', requireAuth, vapiRoutes);
+app.use('/api/interviews', requireAuth, interviewsRoutes); // Added
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

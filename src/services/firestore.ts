@@ -1,14 +1,6 @@
-import {
-  collection,
-  query,
-  where,
-  orderBy,
-  limit as firestoreLimit,
-  getDocs,
-  doc,
-  getDoc,
-} from "firebase/firestore";
-import { db } from "@/firebase/client";
+
+
+import { fetchWithAuth } from "@/lib/api";
 
 /**
  * Get all interviews created by a specific user, ordered by createdAt desc.
@@ -16,17 +8,11 @@ import { db } from "@/firebase/client";
 export async function getInterviewsByUserId(
   userId: string
 ): Promise<Interview[]> {
-  const q = query(
-    collection(db, "interviews"),
-    where("userId", "==", userId),
-    orderBy("createdAt", "desc")
-  );
-
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map((d) => ({
-    id: d.id,
-    ...d.data(),
-  })) as Interview[];
+  const response = await fetchWithAuth(`/api/interviews/user/${userId}`);
+  if (!response.ok) {
+    throw new Error("Failed to fetch user interviews");
+  }
+  return await response.json() as Interview[];
 }
 
 /**
@@ -36,19 +22,11 @@ export async function getLatestInterviews(
   userId: string,
   max = 20
 ): Promise<Interview[]> {
-  const q = query(
-    collection(db, "interviews"),
-    where("finalized", "==", true),
-    where("userId", "!=", userId),
-    orderBy("createdAt", "desc"),
-    firestoreLimit(max)
-  );
-
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map((d) => ({
-    id: d.id,
-    ...d.data(),
-  })) as Interview[];
+  const response = await fetchWithAuth(`/api/interviews/latest?excludeUserId=${userId}&limit=${max}`);
+  if (!response.ok) {
+    throw new Error("Failed to fetch latest interviews");
+  }
+  return await response.json() as Interview[];
 }
 
 /**
@@ -57,11 +35,12 @@ export async function getLatestInterviews(
 export async function getInterviewById(
   id: string
 ): Promise<Interview | null> {
-  const docRef = doc(db, "interviews", id);
-  const snapshot = await getDoc(docRef);
-
-  if (!snapshot.exists()) return null;
-  return { id: snapshot.id, ...snapshot.data() } as Interview;
+  const response = await fetchWithAuth(`/api/interviews/${id}`);
+  if (!response.ok) {
+    if (response.status === 404) return null;
+    throw new Error("Failed to fetch interview");
+  }
+  return await response.json() as Interview;
 }
 
 /**
@@ -69,18 +48,12 @@ export async function getInterviewById(
  */
 export async function getFeedbackByInterviewId(
   interviewId: string,
-  userId: string
+  _userId: string
 ): Promise<Feedback | null> {
-  const q = query(
-    collection(db, "feedback"),
-    where("interviewId", "==", interviewId),
-    where("userId", "==", userId),
-    firestoreLimit(1)
-  );
-
-  const snapshot = await getDocs(q);
-  if (snapshot.empty) return null;
-
-  const feedbackDoc = snapshot.docs[0];
-  return { id: feedbackDoc.id, ...feedbackDoc.data() } as Feedback;
+  const response = await fetchWithAuth(`/api/feedback?interviewId=${interviewId}`);
+  if (!response.ok) {
+    throw new Error("Failed to fetch feedback");
+  }
+  return await response.json() as Feedback | null;
 }
+

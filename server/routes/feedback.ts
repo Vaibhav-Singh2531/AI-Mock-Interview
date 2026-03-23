@@ -81,4 +81,34 @@ router.post('/', async (req: any, res: any) => {
     }
 });
 
+router.get('/', async (req: any, res: any) => {
+    try {
+        const userId = req.user?.uid;
+        if (!userId) {
+            return res.status(401).json({ success: false, error: 'Unauthorized' });
+        }
+
+        const { interviewId } = req.query;
+        if (!interviewId) {
+            return res.status(400).json({ success: false, error: 'Missing interviewId' });
+        }
+
+        const querySnapshot = await db.collection('feedback')
+             .where('userId', '==', userId)
+             .where('interviewId', '==', interviewId)
+             .limit(1)
+             .get();
+
+        if (querySnapshot.empty) {
+            return res.json(null);
+        }
+
+        const doc = querySnapshot.docs[0];
+        return res.json({ id: doc.id, ...doc.data() });
+    } catch (error) {
+        console.error("Error fetching feedback:", error);
+        return res.status(500).json({ success: false, error: 'Internal server error' });
+    }
+});
+
 export default router;
